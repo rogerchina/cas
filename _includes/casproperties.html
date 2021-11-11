@@ -7,6 +7,7 @@
 
 {% assign modules = include.modules | split: "," %}
 {% assign excludes = include.excludes | split: "," %}
+{% assign includes = include.includes | split: "," %}
 {% assign properties = include.properties | split: "," %}
 {% assign thirdParty = include.thirdParty | split: "," %}
 {% assign thirdPartyExactMatch = include.thirdPartyExactMatch | split: "," %}
@@ -245,6 +246,13 @@
                                 {% assign foundExcluded = true %}
                             {% endif %}
                         {% endfor %}
+                        {% if includes.size > 0 %}
+                            {% for inc in includes %}
+                                {% unless config.name contains inc %}
+                                    {% assign foundExcluded = true %}
+                                {% endunless %}
+                            {% endfor %}
+                        {% endif %}
 
                         {% unless foundExcluded == true %}
                             {% assign signingEncryptionCollected = false %}
@@ -325,6 +333,14 @@
                                 {% endif %}
                             {% endfor %}
 
+                            {% if includes.size > 0 %}
+                                {% for inc in includes %}
+                                    {% unless config.name contains inc %}
+                                        {% assign foundExcluded = true %}
+                                    {% endunless %}
+                                {% endfor %}
+                            {% endif %}
+                            
                             {% unless foundExcluded == true %}
                                 {% assign signingEncryptionCollected = false %}
                                 {% if config.name contains ".crypto" %}
@@ -463,6 +479,13 @@
                                 {% assign foundExcluded = true %}
                             {% endif %}
                         {% endfor %}
+                        {% if includes.size > 0 %}
+                            {% for inc in includes %}
+                                {% unless config.name contains inc %}
+                                    {% assign foundExcluded = true %}
+                                {% endunless %}
+                            {% endfor %}
+                        {% endif %}
 
                         {% unless foundExcluded == true %}
                             {% assign signingEncryptionCollected = false %}
@@ -530,18 +553,21 @@
                     {% assign configBlock = cfg[1] %}
 
                     {% for config in configBlock %}
-
                         {% if config.name contains prop %}
-
                             {% unless config.required == true %}
-
-
                                 {% assign foundExcluded = false %}
                                 {% for ex in excludes %}
                                     {% if config.name contains ex %}
                                         {% assign foundExcluded = true %}
                                     {% endif %}
                                 {% endfor %}
+                                {% if includes.size > 0 %}
+                                    {% for inc in includes %}
+                                        {% unless config.name contains inc %}
+                                            {% assign foundExcluded = true %}
+                                        {% endunless %}
+                                    {% endfor %}
+                                {% endif %}
 
                                 {% unless foundExcluded == true %}
                                     {% assign signingEncryptionCollected = false %}
